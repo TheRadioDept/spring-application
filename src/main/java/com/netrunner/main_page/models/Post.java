@@ -55,4 +55,12 @@ public class Post {
     public int getViews() {
         return views;
     }
+
+    public Post(){
+    }
+    public Post(String title, String anons, String full_text) {
+        this.title = title;
+        this.anons = anons;
+        this.full_text = full_text;
+    }
 }
