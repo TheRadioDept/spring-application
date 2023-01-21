@@ -31,6 +31,7 @@ public class BlogController {
         return "blog-add";
     }
 
+    //Add blog data to DB
     @PostMapping("/blog/add")
     public String blogPostAdd(@RequestParam String title, @RequestParam String anons, @RequestParam String full_text, Model model) {
         Post post = new Post(title, anons, full_text);
@@ -38,6 +39,7 @@ public class BlogController {
         return "redirect:/blog";
     }
 
+    //Access article's 'Details'
     @GetMapping("/blog/{id}")
     public String blogDetailsId(@PathVariable(value="id") long id, Model model){
         if(!postRepository.existsById(id)){
@@ -48,5 +50,28 @@ public class BlogController {
         post.ifPresent(res::add);
         model.addAttribute("post", res);
         return "blog-details";
+    }
+
+    //Edit article based on it's ID
+    @GetMapping("/blog/{id}/edit")
+    public String blogIdEdit(@PathVariable(value="id") long id, Model model){
+        if(!postRepository.existsById(id)){
+            return "redirect:/blog";
+        }
+        Optional<Post> post = postRepository.findById(id);
+        ArrayList<Post> res = new ArrayList<>();
+        post.ifPresent(res::add);
+        model.addAttribute("post", res);
+        return "blog-edit";
+    }
+
+    @PostMapping("/blog/{id}/edit")
+    public String blogPostUpdate(@PathVariable(value="id") long id, @RequestParam String title, @RequestParam String anons, @RequestParam String full_text, Model model) {
+        Post post = postRepository.findById(id).orElseThrow(); //orElseThrow is used to throw exception when ID is not found.
+        post.setTitle(title);
+        post.setAnons(anons);
+        post.setFull_text(full_text);
+        postRepository.save(post);
+        return "redirect:/blog/{id}";
     }
 }
